@@ -74,18 +74,26 @@ public:
                 EdgeDistance r = (**u).shortestDistance + (*edge);
                 if (r < (*z).shortestDistance) {
                     (*z).shortestDistance = r;
+                    (*z).parent = u;
                     Q.push(&z);
                 }
             }
         }
 
+        Vertex* next = &target;
         std::vector<std::pair<VertexElement,EdgeDistance>> vertices;
-        verts = graph.vertices();
-        for (VertexItor pv = verts.begin(); pv != verts.end(); ++pv) {
-            if (*pv == target) {
-                vertices.push_back(std::make_pair((**pv).element, (**pv).shortestDistance));
+        while (next != nullptr) {
+            verts = graph.vertices();
+            for (VertexItor pv = verts.begin(); pv != verts.end(); ++pv) {
+                Vertex& v = *pv;
+                if (&v == next) {
+                    vertices.push_back(std::make_pair((*v).element, (*v).shortestDistance));
+                    next = (*v).parent;
+                }
             }
         }
+
+        std::reverse(vertices.begin(), vertices.end());
 
         return vertices;
     }
